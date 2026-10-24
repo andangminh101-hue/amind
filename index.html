@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#100b24"><title>MINH AN MOD</title>
+<style>
+:root{--bg:#0b0718;--panel:#17112b;--text:#f7f2ff;--muted:#b7aacd;--pink:#ff4fd8;--cyan:#55e7ff;--line:#493362}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 15% 0%,#39205d,transparent 36%),radial-gradient(circle at 100% 20%,#15364f,transparent 32%),var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh}body:before{content:"";position:fixed;inset:0;pointer-events:none;background-image:radial-gradient(#fff7 1px,transparent 1px);background-size:42px 42px;opacity:.14;animation:stars 24s linear infinite}@keyframes stars{to{background-position:84px 84px}}main{max-width:700px;margin:auto;padding:24px 14px 60px;position:relative}.hero{text-align:center;padding:20px 10px}.orb{width:88px;height:88px;border-radius:50%;margin:0 auto 14px;background:linear-gradient(135deg,var(--pink),#8c5bff,var(--cyan));padding:3px;animation:float 4s ease-in-out infinite}.orb div{height:100%;border-radius:50%;background:#150e2a;display:grid;place-items:center;font-size:32px}@keyframes float{50%{transform:translateY(-6px)}}h1{font-size:clamp(28px,7vw,38px);margin:0;letter-spacing:1px;background:linear-gradient(90deg,#fff,var(--pink),var(--cyan));color:transparent;background-clip:text}.muted{color:var(--muted);font-size:13px;line-height:1.55}.card{background:#17112bee;border:1px solid var(--line);border-radius:18px;padding:17px;margin:13px 0;box-shadow:0 12px 35px #0003}h2{font-size:17px;margin:0 0 13px}.field{width:100%;padding:13px;border:1px solid #574173;border-radius:12px;background:#0d091b;color:white;font-size:15px;margin:7px 0;outline:none}.btn{border:0;border-radius:12px;padding:12px 15px;background:linear-gradient(100deg,#b82eaa,#6d4aff);color:white;font-weight:700;font-size:14px;cursor:pointer;min-height:44px}.btn:active{transform:scale(.98)}.msg{font-size:13px;line-height:1.5;overflow-wrap:anywhere}.hide{display:none!important}.notice{border-left:3px solid var(--cyan);padding:10px;background:#55e7ff0d;color:#c9f7ff;font-size:12px;line-height:1.5}.foot{text-align:center;color:#817496;font-size:11px;padding:20px}
+</style></head><body><main><header class="hero"><div class="orb"><div>✦</div></div><h1>MINH AN MOD</h1><p class="muted">MOBILE TOOL • KEY SERVER</p></header>
+<section class="card"><h2>🔐 Xác minh key</h2><p class="muted">Nhập key được cấp bởi quản trị viên. Key được xác minh qua máy chủ.</p><input class="field" id="key" type="password" placeholder="Nhập key của bạn" autocomplete="off"><button class="btn" id="verify">Xác minh key</button><p class="msg" id="result" aria-live="polite"></p></section>
+<section class="card hide" id="success"><h2>✨ Trạng thái tài khoản</h2><p id="details" class="msg"></p><div class="notice">Đây là cổng xác minh key. Hãy đặt các tính năng thực tế của tool phía sau xác minh máy chủ nếu cần bảo vệ quyền truy cập.</div></section>
+<p class="foot">MINH AN MOD · Key server</p></main>
+<script>
+const API_URL = "PASTE_SUPABASE_FUNCTIONS_URL_HERE";
+const ANON_KEY = "PASTE_SUPABASE_ANON_KEY_HERE";
+document.getElementById("verify").addEventListener("click", async()=>{
+ const key=document.getElementById("key").value.trim(), out=document.getElementById("result"), success=document.getElementById("success");
+ success.classList.add("hide");
+ if(!key){out.textContent="Vui lòng nhập key.";return}
+ if(API_URL.includes("PASTE_")||ANON_KEY.includes("PASTE_")){out.textContent="Chưa cấu hình máy chủ. Xem README.md để kết nối Supabase.";return}
+ out.textContent="Đang xác minh...";
+ try{
+  const r=await fetch(API_URL+"/verify-key",{method:"POST",headers:{"Content-Type":"application/json","apikey":ANON_KEY,"Authorization":"Bearer "+ANON_KEY},body:JSON.stringify({key})});
+  const d=await r.json();
+  if(!r.ok||!d.valid){out.textContent=d.message||"Key không hợp lệ hoặc đã hết hạn.";return}
+  out.textContent="✓ Key hợp lệ.";document.getElementById("details").textContent="Trạng thái: hoạt động · Hạn sử dụng: "+(d.expires_at?new Date(d.expires_at).toLocaleString("vi-VN"):"Vĩnh viễn");
+  success.classList.remove("hide");
+ }catch(e){out.textContent="Không kết nối được máy chủ. Kiểm tra cấu hình và thử lại."}
+});
+</script></body></html>
